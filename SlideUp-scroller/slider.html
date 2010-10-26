@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+  <title>SlideUp Scroller example</title>
+  <script src="jquery.js" type="text/javascript"></script>
+  <style type="text/css">
+  .scroller {
+    height: 150px;
+    overflow: hidden;
+  }
+  #frame {
+    margin-top: -30px;
+  }
+  #frame div {
+    height: 30px;
+    line-height: 30px;
+  }
+  </style>
+  <script type="text/javascript">
+    var topElementId = '0', t;
+
+    $(document).ready(function(){
+      var el = $('#frame').children();
+      // проверяем количество элементов в списке: если элементов больше
+      // чем вмещается в видимую область, то начинаем скролирование
+      if (el.size() > 6) {
+        // присваиваем каждому элементу списка свой ID
+        el.each(function(i){
+          $(this).attr('id','row'+i);
+        });
+        // запускаем таймер. число задает количество милисекунд между
+        // загрузкой страницы и началом скролирования
+        t = setTimeout('listSlideUp()', 3000);
+      }
+    });
+
+    function listSlideUp() {
+      // для самого верхнего элемента списка (не видимого на странице)
+      // вызываем функцию плавного уменьшения высоты
+      $('#row'+topElementId).slideUp(2000, function(){
+        // тут определяем кол-бэк функцию, выполняющуюся после завершения
+        // работы slideup
+        
+        // если текущий элемент не вспомогательный, 
+        // то переносим его в конец списка
+        if (topElementId > 0) {
+          // создаем копию верхнего элемента
+          var topElement = jQuery('#row'+topElementId).clone().show();
+          // убираем верхний элемент из списка
+          $('#row'+topElementId).remove();
+          // добавляем скопированный элемент в конец списка
+          $('#frame').append(topElement);
+        }
+        topElementId++;
+        // если номер верхнего элемента больше количества элементов,
+        // то сбрасываем его в 1
+        if (topElementId >= jQuery('#frame').children().size()) {
+          topElementId = 1;
+        }
+      });
+      // опять запускаем таймер
+      t = setTimeout('listSlideUp()', 4000);
+    }
+  </script>
+</head>
+<body>
+<div class="scroller">
+  <div id="frame">
+    <div></div>
+    <div>Test block #1</div>
+    <div>Test block #2</div>
+    <div>Test block #3</div>
+    <div>Test block #4</div>
+    <div>Test block #5</div>
+    <div>Test block #6</div>
+    <div>Test block #7</div>
+    <div>Test block #8</div>
+    <div>Test block #9</div>
+  </div>
+</div>
+</body>
+</html>
